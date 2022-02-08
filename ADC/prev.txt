@@ -1,0 +1,53 @@
+/*#include "stm32f0xx.h"
+#include "SPI.h"
+
+volatile static uint32_t matrix[8] = {0};
+
+void InitADC(void);
+void calibrate(void);
+void enableSEQ(void);
+void disableSEQ(void);
+
+void InitADC(void) {
+	RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+	GPIOA->MODER |= GPIO_MODER_MODER1;
+	RCC->APB2ENR |= RCC_APB2ENR_ADC1EN;
+	ADC1->CR |= ADC_CR_ADCAL;
+	while (ADC1->CR & ADC_CR_ADCAL) {}
+	ADC1->CR |= ADC_CR_ADEN;
+	while((ADC1->ISR & ADC_ISR_ADRDY) == 0);
+	ADC1->CHSELR |= ADC_CHSELR_CHSEL1;					
+	ADC1->CFGR1 |= ADC_CFGR1_RES_0; 
+	ADC1->CFGR1 |= ADC_CFGR1_CONT;
+	ADC1->CR |= ADC_CR_ADSTART;
+}
+
+
+void SPI2_IRQHandler(void);
+void SPI2_IRQHandler(void) {
+	static int i = 0;
+	if (SPI2->SR & SPI_SR_RXNE) {
+		GPIOA->BSRR = GPIO_BSRR_BS_8;
+		SPI2->DR;
+		GPIOA->BSRR = GPIO_BSRR_BR_8;
+		SPI2->DR = ((matrix[i])) | ((0x1U << i) << 8);
+		if(i < 7) { i++; } 
+		else { i = 0; }
+	}
+}
+
+int main() {
+	initSPI();
+	InitADC();
+	uint32_t result = 0;
+	uint32_t previous = 0;
+	while(1){
+		while(!(ADC1->ISR & ADC_ISR_EOC));
+		result = ADC1->DR;
+		if (result != previous) {
+			matrix[(previous % 8)] = 0;
+			matrix[result % 8] = 0xFF;
+			previous = result;
+		}
+	}
+}*/
